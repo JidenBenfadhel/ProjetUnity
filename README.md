@@ -14,7 +14,7 @@ Pour récupérer le projet sur ta machine :
 1. Ouvre ton terminal (ou Git Bash) dans le dossier de ton choix.
 2. Clone le dépôt distant avec cette commande :
    ```bash
-   git clone [https://github.com/JidenBenfadhel/ProjetUnity.git](https://github.com/JidenBenfadhel/ProjetUnity.git)
+   git clone https://github.com/JidenBenfadhel/ProjetUnity.git
    ```
 3. Ouvre **Unity Hub**.
 4. Clique sur **Open** (ou *Add project from disk*), navigue jusqu'au dossier cloné et sélectionne-le.
