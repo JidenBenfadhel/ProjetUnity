@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 152008054444735170}
   - component: {fileID: 5910681608551813492}
   - component: {fileID: 375506582851328285}
+  - component: {fileID: -4974590608692497204}
   m_Layer: 0
   m_Name: EnemyTank
   m_TagString: Enemy
@@ -60,7 +61,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 84
   m_CollisionDetection: 0
 --- !u!114 &375506582851328285
 MonoBehaviour:
@@ -76,9 +77,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   turretTransform: {fileID: 0}
   firePoint: {fileID: 0}
-  projectilePrefab: {fileID: 7313010701455095864, guid: 88f89701fe0f5ed4b94d174817abda7c, type: 3}
-  player: {fileID: 0}
+  projectilePrefab: {fileID: 7313010701455095864, guid: 72c9ae55b33814043a1d5a5bc81854f6, type: 3}
+  moveSpeed: 3
+  stopDistance: 6
   fireRate: 2
+--- !u!114 &-4974590608692497204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 526819759291212325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cabd9be4e81343ceb09d44279d4883e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  health: 3
 --- !u!1 &589982719330014329
 GameObject:
   m_ObjectHideFlags: 0
