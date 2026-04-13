@@ -3,7 +3,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     public float speed = 10f;
-    public int maxBounces = 1; 
+    public int maxBounces = 1;
     private int currentBounces = 0;
     private Rigidbody rb;
 
@@ -35,11 +35,7 @@ public class Projectile : MonoBehaviour
             Destroy(collision.gameObject);
             Destroy(gameObject);
         }
-        // Si on touche une autre balle, on détruit les deux balles
-        else if (collision.gameObject.CompareTag("Projectile"))
-        {
-            Destroy(collision.gameObject);
-            Destroy(gameObject);
-        }
+
     }
+    
 }
