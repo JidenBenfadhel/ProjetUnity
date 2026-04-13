@@ -10,12 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 152008054444735170}
   - component: {fileID: 5910681608551813492}
-  - component: {fileID: 4071307488127546990}
-  - component: {fileID: 3300144590383557220}
-  - component: {fileID: 3649512423913981751}
+  - component: {fileID: 375506582851328285}
+  - component: {fileID: -4974590608692497204}
   m_Layer: 0
-  m_Name: PlayerTank
-  m_TagString: Player
+  m_Name: EnemyTank
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -62,9 +61,9 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 84
   m_CollisionDetection: 0
---- !u!114 &4071307488127546990
+--- !u!114 &375506582851328285
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -73,17 +72,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 526819759291212325}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 253e77997840734439a7cc82846749a7, type: 3}
+  m_Script: {fileID: 11500000, guid: d7c776439385945b5aecd84d14272df1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  moveSpeed: 5
-  turretTransform: {fileID: 873331583076641479}
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 64
-  projectilePrefab: {fileID: 7313010701455095864, guid: 88f89701fe0f5ed4b94d174817abda7c, type: 3}
-  firePoint: {fileID: 6609842836970821390}
---- !u!114 &3300144590383557220
+  m_EditorClassIdentifier: Assembly-CSharp::Enemy
+  turretTransform: {fileID: 0}
+  firePoint: {fileID: 0}
+  projectilePrefab: {fileID: 7313010701455095864, guid: 72c9ae55b33814043a1d5a5bc81854f6, type: 3}
+  moveSpeed: 3
+  stopDistance: 6
+  fireRate: 2
+--- !u!114 &-4974590608692497204
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -92,40 +90,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 526819759291212325}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Script: {fileID: 11500000, guid: 6cabd9be4e81343ceb09d44279d4883e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
-  m_Actions: {fileID: -944628639613478452, guid: 2b3b0871c9098d148a62ad429264b432, type: 3}
-  m_NotificationBehavior: 0
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents: []
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
-  m_DefaultActionMap: Player
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
---- !u!114 &3649512423913981751
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 526819759291212325}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a707be04b92ce432caa0ba38c9ae634b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
-  health: 1
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  health: 3
 --- !u!1 &589982719330014329
 GameObject:
   m_ObjectHideFlags: 0

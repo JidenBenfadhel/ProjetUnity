@@ -3,7 +3,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     public float speed = 10f;
-    public int maxBounces = 1;
+    public int maxBounces = 1; 
     private int currentBounces = 0;
     private Rigidbody rb;
 
@@ -29,13 +29,36 @@ public class Projectile : MonoBehaviour
                 Destroy(gameObject);
             }
         }
-        // Si on touche l'ennemi OU le joueur, on détruit le tank et la balle
-        else if (collision.gameObject.CompareTag("Enemy") || collision.gameObject.CompareTag("Player"))
+        
+        // Si on touche le player, on réduit la vie du tank player et on détruit la balle
+        else if (collision.gameObject.CompareTag("Player"))
+        {
+            PlayerHealth playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(1);
+            }
+
+            Destroy(gameObject);
+        }
+
+        // Si on touche l'ennemi, on réduit la vie du tank ennemi et on détruit la balle
+        else if (collision.gameObject.CompareTag("Enemy"))
+        {
+            EnemyHealth enemyHealth = collision.gameObject.GetComponent<EnemyHealth>();
+            if (enemyHealth != null)
+            {
+                enemyHealth.TakeDamage(1);
+            }
+
+            Destroy(gameObject);
+        }
+
+        // Si on touche une autre balle, on détruit les deux balles
+        else if (collision.gameObject.CompareTag("Projectile"))
         {
             Destroy(collision.gameObject);
             Destroy(gameObject);
         }
-
     }
-    
 }
