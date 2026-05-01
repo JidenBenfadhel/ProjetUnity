@@ -80,6 +80,8 @@ MonoBehaviour:
   projectilePrefab: {fileID: 7313010701455095864, guid: 72c9ae55b33814043a1d5a5bc81854f6, type: 3}
   moveSpeed: 3
   stopDistance: 6
+  strafeSpeed: 3
+  strafeChangeInterval: 1
   fireRate: 2
 --- !u!114 &-4974590608692497204
 MonoBehaviour:
