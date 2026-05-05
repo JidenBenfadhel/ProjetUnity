@@ -15,7 +15,8 @@ public class EnemyController : MonoBehaviour
     [Header("Références")]
     public Transform turretTransform;
     public Transform firePoint;
-    public GameObject projectilePrefab;
+    public GameObject standardProjectilePrefab; // Balle normale (0 rebond)
+    public GameObject sniperProjectilePrefab;   // Le prefab de projectile spécial pour les snipers, qui peut rebondir une fois.
 
     [Header("Statistiques de base")]
     public float moveSpeed = 4f;
@@ -211,17 +212,18 @@ public class EnemyController : MonoBehaviour
 
         if (fireTimer >= actualFireRate)
         {
-            // On vérifie que le radar a validé une cible
             if (canShootTarget)
             {
-                // Vérification cruciale : On s'assure que le canon a eu le temps de tourner 
-                // et qu'il est bien aligné avec l'angle calculé avant de tirer (marge d'erreur de 5 degrés)
                 float angleToTarget = Vector3.Angle(firePoint.forward, currentAimDirection);
                 
                 if (angleToTarget < 5f)
                 {
-                    Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
-                    fireTimer = 0f; // Le tir est parti, on remet le chrono à zéro
+                    // On choisit la balle en fonction du profil de l'ennemi
+                    GameObject prefabToShoot = (enemyType == AIType.Sniper) ? sniperProjectilePrefab : standardProjectilePrefab;
+                    
+                    // On instancie la munition choisie
+                    Instantiate(prefabToShoot, firePoint.position, firePoint.rotation);
+                    fireTimer = 0f; 
                 }
             }
         }
@@ -234,8 +236,10 @@ public class EnemyController : MonoBehaviour
         Vector3 directAim = (player.position - firePoint.position).normalized;
         directAim.y = 0f;
 
-        // Test du tir direct (Ligne de vue dégagée)
-        if (Physics.Raycast(firePoint.position, directAim, out RaycastHit directHit, 50f))
+        Vector3 sphereCastOrigin = firePoint.position + directAim * 0.3f;
+
+        // Le "0.3f" correspond au rayon de la sphère (l'épaisseur estimée de l'obus).
+        if (Physics.SphereCast(sphereCastOrigin, 0.3f, directAim, out RaycastHit directHit, 50f))
         {
             if (directHit.collider.CompareTag("Player"))
             {
@@ -250,19 +254,16 @@ public class EnemyController : MonoBehaviour
             for (int i = 0; i < 360; i++)
             {
                 float angle = i * 1f;
-                // On crée un vecteur de direction basé sur l'angle
                 Vector3 testDirection = Quaternion.Euler(0, angle, 0) * Vector3.forward;
 
-                // On tire le premier rayon
                 if (Physics.Raycast(firePoint.position, testDirection, out RaycastHit hit, 50f))
                 {
-                    // S'il touche un mur, on calcule le rebond
                     if (hit.collider.CompareTag("Wall"))
                     {
                         Vector3 reflectDir = Vector3.Reflect(testDirection, hit.normal);
                         reflectDir.y = 0f;
-                        // On relance un second rayon depuis le mur pour voir où va le rebond
-                        // (On décale le point de départ de 0.5f pour ne pas retoucher le mur lui-même)
+                        
+                        // Rebond (décalé de 0.5f pour ne pas retoucher le mur)
                         if (Physics.Raycast(hit.point + reflectDir * 0.5f, reflectDir, out RaycastHit bounceHit, 50f))
                         {
                             if (bounceHit.collider.CompareTag("Player"))
@@ -270,12 +271,14 @@ public class EnemyController : MonoBehaviour
                                 isLocked = true;
                                 return testDirection; 
                             }
+                            // Si le rebond risque de toucher un "Enemy", il l'ignorera aussi
                         }
                     }
                 }
             }
         }
-        // Si aucun tir n'est possible, on regarde quand même dans la direction du joueur
+        
+        // Si aucun tir propre n'est possible, on regarde quand même dans la direction du joueur pour être prêt à tirer dès que l'allié s'écartera
         return directAim;
     }
 }

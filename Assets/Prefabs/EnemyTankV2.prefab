@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: health
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -4974590608692497204, guid: 9875d18540dc74cfdb4119e60d5c7d93, type: 3}
+      propertyPath: explosionPrefab
+      value: 
+      objectReference: {fileID: 5814163796361930292, guid: 87ea843b43b124b4797e60d332c18b31, type: 3}
     - target: {fileID: 152008054444735170, guid: 9875d18540dc74cfdb4119e60d5c7d93, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.3
@@ -96,6 +100,14 @@ PrefabInstance:
       propertyPath: searchCoverRadius
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 375506582851328285, guid: 9875d18540dc74cfdb4119e60d5c7d93, type: 3}
+      propertyPath: sniperProjectilePrefab
+      value: 
+      objectReference: {fileID: 7313010701455095864, guid: a390a43e30209de4c820d1ed228051cb, type: 3}
+    - target: {fileID: 375506582851328285, guid: 9875d18540dc74cfdb4119e60d5c7d93, type: 3}
+      propertyPath: standardProjectilePrefab
+      value: 
+      objectReference: {fileID: 7313010701455095864, guid: 76ed7a90ded96654ebb57270e8d2d978, type: 3}
     - target: {fileID: 526819759291212325, guid: 9875d18540dc74cfdb4119e60d5c7d93, type: 3}
       propertyPath: m_Name
       value: EnemyTankV2
