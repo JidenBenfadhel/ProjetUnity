@@ -347,6 +347,7 @@ GameObject:
   - component: {fileID: 1566362401135938078}
   - component: {fileID: -147373352829867253}
   - component: {fileID: -7963023220987990825}
+  - component: {fileID: -8952663262036955238}
   m_Layer: 0
   m_Name: Destructibles
   m_TagString: Untagged
@@ -442,3 +443,16 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-8952663262036955238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6560762833221583329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7c5621d966f646e49a439bbf7a86572, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DestructibleHealth
+  health: 1

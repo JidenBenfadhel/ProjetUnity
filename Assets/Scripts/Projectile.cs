@@ -1,11 +1,20 @@
 using UnityEngine;
 
+public enum ProjectileOwner
+{
+    Player,
+    Enemy
+}
+
 public class Projectile : MonoBehaviour
 {
     public float speed = 10f;
     public int maxBounces = 1; 
     private int currentBounces = 0;
     private Rigidbody rb;
+
+    [Header("Owner")]
+    public ProjectileOwner owner;
 
     private void Awake()
     {
@@ -23,6 +32,16 @@ public class Projectile : MonoBehaviour
         // Si on touche un mur, on compte le rebond
         if (collision.gameObject.CompareTag("Wall"))
         {
+            DestructibleHealth destructible = collision.gameObject.GetComponent<DestructibleHealth>();
+
+            if (destructible != null && owner == ProjectileOwner.Player)
+            {
+                destructible.TakeDamage(1);
+
+                Destroy(gameObject); // Si ça touche un destructible alors le projecticle est détruit
+                return;
+            }
+
             currentBounces++;
             if (currentBounces > maxBounces)
             {
