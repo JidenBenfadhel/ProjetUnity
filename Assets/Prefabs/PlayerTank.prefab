@@ -126,6 +126,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   health: 1
+  explosionPrefab: {fileID: 5814163796361930292, guid: 87ea843b43b124b4797e60d332c18b31, type: 3}
 --- !u!1 &589982719330014329
 GameObject:
   m_ObjectHideFlags: 0

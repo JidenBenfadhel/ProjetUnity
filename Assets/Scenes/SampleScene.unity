@@ -1405,6 +1405,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   endPanel: {fileID: 1687716311}
   endText: {fileID: 1776968183}
+  endScreenDelay: 2
 --- !u!4 &655188873
 Transform:
   m_ObjectHideFlags: 0
@@ -4121,8 +4122,8 @@ SceneRoots:
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 1542537793}
-  - {fileID: 3316810967857067494}
   - {fileID: 1867377201}
+  - {fileID: 3316810967857067494}
   - {fileID: 1871147480}
   - {fileID: 1943624562}
   - {fileID: 436679955}

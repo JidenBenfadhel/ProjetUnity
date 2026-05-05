@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,6 +9,9 @@ public class GameManager : MonoBehaviour
     [Header("UI Fin de partie")]
     public GameObject endPanel;
     public TextMeshProUGUI endText;
+
+    [Header("Délais")]
+    public float endScreenDelay = 2f; // Le temps d'attente en secondes
 
     private bool gameEnded = false;
 
@@ -21,7 +25,6 @@ public class GameManager : MonoBehaviour
         Instance = this;
     }
 
-    // On y ajoutera la logique de victoire/défaite plus tard
     public bool IsGameEnded()
     {
         return gameEnded;
@@ -40,7 +43,6 @@ public class GameManager : MonoBehaviour
         if (gameEnded) return;
 
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        Debug.Log("Ennemis restants : " + enemies.Length);
 
         if (enemies.Length == 0)
         {
@@ -51,15 +53,25 @@ public class GameManager : MonoBehaviour
 
     private void EndGame(string message, Color color)
     {
+        StartCoroutine(EndGameSequence(message, color));
+    }
+
+    private IEnumerator EndGameSequence(string message, Color color)
+    {
+        // On fige l'action immédiatement (destruction des obus, immobilisation des tanks)
         DestroyAllProjectiles();
         FreezeAllTanks();
+
+        // On attend le temps défini dans l'Inspector
+        yield return new WaitForSeconds(endScreenDelay);
+
+        // Après le délai, on affiche enfin l'écran de fin
         ShowEndScreen(message, color);
     }
 
     private void DestroyAllProjectiles()
     {
         GameObject[] projectiles = GameObject.FindGameObjectsWithTag("Projectile");
-
         foreach (GameObject projectile in projectiles)
         {
             Destroy(projectile);
@@ -72,7 +84,6 @@ public class GameManager : MonoBehaviour
         if (player != null)
         {
             player.enabled = false;
-
             Rigidbody rb = player.GetComponent<Rigidbody>();
             if (rb != null)
             {
@@ -86,7 +97,6 @@ public class GameManager : MonoBehaviour
         foreach (EnemyController enemy in enemies)
         {
             enemy.enabled = false;
-
             Rigidbody rb = enemy.GetComponent<Rigidbody>();
             if (rb != null)
             {
