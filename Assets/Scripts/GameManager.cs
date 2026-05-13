@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -67,6 +68,8 @@ public class GameManager : MonoBehaviour
 
         // Après le délai, on affiche enfin l'écran de fin
         ShowEndScreen(message, color);
+
+        Invoke(nameof(ReturnToMenu), 3f);
     }
 
     private void DestroyAllProjectiles()
@@ -117,5 +120,10 @@ public class GameManager : MonoBehaviour
             endText.text = message;
             endText.color = color;
         }
+    }
+
+    public void ReturnToMenu()
+    {
+        SceneManager.LoadScene("MainMenuScene");
     }
 }
