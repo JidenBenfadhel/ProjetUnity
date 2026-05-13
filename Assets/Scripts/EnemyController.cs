@@ -8,6 +8,16 @@ public class EnemyController : MonoBehaviour
     public enum AIType { Rusher, Sniper, Tactical }
     public enum DifficultyLevel { Level1, Level2, Level3 }
 
+    [Header("Animation & Game Feel")]
+    public Transform bodyMesh; 
+    public float wobbleSpeed = 20f;
+    public float wobbleAmount = 1.5f;
+
+    [Header("Chenilles")]
+    public Renderer[] trackRenderers; 
+    public float trackScrollSpeed = 0.5f;
+    public bool scrollXAxis = false;
+
     [Header("Configuration IA")]
     public AIType enemyType = AIType.Rusher;
     public DifficultyLevel difficulty = DifficultyLevel.Level1;
@@ -60,6 +70,47 @@ public class EnemyController : MonoBehaviour
         HandleAiming();
         HandleShooting();
         HandleMovement();
+        HandleAnimation();
+    }
+
+    private void HandleAnimation()
+    {
+        // On vérifie si l'agent NavMesh est en train de se déplacer
+        if (agent.velocity.sqrMagnitude > 0.01f)
+        {
+            // Le tremblement
+            if (bodyMesh != null)
+            {
+                float wobble = Mathf.Sin(Time.time * wobbleSpeed) * wobbleAmount;
+                bodyMesh.localRotation = Quaternion.Euler(0f, 0f, wobble);
+            }
+
+            // Le défilement des chenilles
+            if (trackRenderers != null && trackRenderers.Length > 0)
+            {
+                float offset = Time.time * trackScrollSpeed;
+                foreach (Renderer rend in trackRenderers)
+                {
+                    if (rend != null && rend.material != null)
+                    {
+                        Vector2 currentOffset = rend.material.mainTextureOffset;
+                        if (scrollXAxis) 
+                            currentOffset.x = offset;
+                        else 
+                            currentOffset.y = offset;
+                            
+                        rend.material.mainTextureOffset = currentOffset;
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (bodyMesh != null)
+            {
+                bodyMesh.localRotation = Quaternion.Lerp(bodyMesh.localRotation, Quaternion.identity, Time.deltaTime * 10f);
+            }
+        }
     }
 
     private void HandleMovement()
