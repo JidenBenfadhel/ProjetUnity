@@ -456,3 +456,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DestructibleHealth
   health: 1
+  debrisPrefab: {fileID: 0}

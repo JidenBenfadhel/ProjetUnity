@@ -55,15 +55,26 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector3 inputDirection = new Vector3(moveInput.x, 0f, moveInput.y);
+        // On récupère l'orientation actuelle de la caméra dans l'espace mécanique
+        Vector3 camForward = Camera.main.transform.forward;
+        Vector3 camRight = Camera.main.transform.right;
+
+        // On aplatit ces vecteurs sur l'axe Y (vertical) 
+        // pour éviter que le tank ne veuille s'enfoncer dans le sol en voulant avancer
+        camForward.y = 0f;
+        camRight.y = 0f;
+        camForward.Normalize();
+        camRight.Normalize();
+
+        // On recalcule la direction de mouvement par rapport à l'axe de la caméra
+        // (L'avant de l'écran * ton stick vertical + la droite de l'écran * ton stick horizontal)
+        Vector3 inputDirection = (camForward * moveInput.y) + (camRight * moveInput.x);
+
         if (inputDirection.sqrMagnitude > 0.01f)
         {
-            // On calcule l'angle vers lequel le tank DOIT regarder
             Quaternion targetRotation = Quaternion.LookRotation(inputDirection);
-            // On fait pivoter le châssis de façon fluide vers ce nouvel angle
             rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime));
-            // Le tank avance UNIQUEMENT tout droit (dans le sens de ses chenilles)
-            // L'utilisation de inputDirection.magnitude permet de garder la sensibilité du joystick
+
             Vector3 movement = transform.forward * inputDirection.magnitude * moveSpeed * Time.fixedDeltaTime;
             rb.MovePosition(rb.position + movement);
         }
