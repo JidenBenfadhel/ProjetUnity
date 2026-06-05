@@ -16,6 +16,10 @@ public class Projectile : MonoBehaviour
     [Header("Owner")]
     public ProjectileOwner owner;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip hitSound;
+    public AudioClip bounceSound;
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -25,6 +29,10 @@ public class Projectile : MonoBehaviour
     {
         // Propulse le projectile vers l'avant dès sa création
         rb.linearVelocity = transform.forward * speed;
+        if (audioSource != null && owner == ProjectileOwner.Player)
+        {
+            audioSource.PlayOneShot(hitSound);
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
