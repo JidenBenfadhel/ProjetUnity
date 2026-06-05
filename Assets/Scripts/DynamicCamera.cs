@@ -1,67 +1,78 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class DynamicCamera : MonoBehaviour
 {
-    [Header("Cibles")]
+    [Header("Cible")]
     public Transform player;
 
-    [Header("Mouvement")]
+    [Header("Mouvement de Suivi")]
     public float smoothTime = 0.3f;
-    public Vector3 offset; 
+    public Vector3 offset = new Vector3(0f, 12f, -12f); 
+
+    [Header("Rotation Orbitale")]
+    public float rotationSpeed = 100f;       
+    public float rotationSmoothTime = 8f;    
+    public float pitchAngle = 45f;           
 
     [Header("Limites de l'arène (Bords)")]
-    public Vector2 minBounds; // Les coordonnées minimales (ex: X = -15, Z = -15)
-    public Vector2 maxBounds; // Les coordonnées maximales (ex: X = 15, Z = 15)
+    public Vector2 minBounds; 
+    public Vector2 maxBounds; 
 
     private Vector3 velocity = Vector3.zero;
+    private float currentRotationAngle = 0f;
 
     private void Start()
     {
-        // Si l'offset n'est pas réglé dans l'Inspector, on prend la position initiale de la caméra
-        if (offset == Vector3.zero)
-        {
-            offset = transform.position;
-        }
+        currentRotationAngle = transform.eulerAngles.y;
     }
 
     private void LateUpdate()
     {
         if (player == null) return;
 
-        Vector3 centerPoint = GetCenterPoint();
+        HandleRotationInput();
 
-        Vector3 desiredPosition = centerPoint + offset;
+        Quaternion camTurnRotation = Quaternion.Euler(0f, currentRotationAngle, 0f);
+        Vector3 rotatedOffset = camTurnRotation * offset;
+        Vector3 desiredPosition = player.position + rotatedOffset;
+        if (minBounds != Vector2.zero || maxBounds != Vector2.zero)
+        {
+            desiredPosition.x = Mathf.Clamp(desiredPosition.x, minBounds.x, maxBounds.x);
+            desiredPosition.z = Mathf.Clamp(desiredPosition.z, minBounds.y, maxBounds.y);
+        }
 
-        // Clamper (bloquer) les coordonnées pour ne pas dépasser les bords de l'arène
-        desiredPosition.x = Mathf.Clamp(desiredPosition.x, minBounds.x, maxBounds.x);
-        desiredPosition.z = Mathf.Clamp(desiredPosition.z, minBounds.y, maxBounds.y);
-
-        // Déplacement ultra fluide vers la nouvelle position
         transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref velocity, smoothTime);
+        Quaternion targetRotation = Quaternion.Euler(pitchAngle, currentRotationAngle, 0f);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSmoothTime);
     }
 
-    private Vector3 GetCenterPoint()
+    private void HandleRotationInput()
     {
-        // On récupère tous les ennemis actuellement dans l'arène grâce à leur Tag
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        float rotInput = 0f;
 
-        // S'il n'y a plus d'ennemis, on centre uniquement sur le joueur
-        if (enemies.Length == 0)
+        if (Keyboard.current != null)
         {
-            return player.position;
+            if (Keyboard.current.qKey.isPressed) rotInput -= 1f; // Touche A
+            if (Keyboard.current.eKey.isPressed) rotInput += 1f; // Touche E
         }
 
-        // Sinon, on additionne les positions du joueur ET de tous les ennemis
-        Vector3 totalPositions = player.position;
-        int targetCount = 1;
-
-        foreach (GameObject enemy in enemies)
+        // ================= LECTURE DE LA MANETTE =================
+        if (Gamepad.current != null)
         {
-            totalPositions += enemy.transform.position;
-            targetCount++;
+            // Lecture du Stick Droit (Axe Horizontal)
+            float stickX = Gamepad.current.rightStick.x.ReadValue();
+            if (Mathf.Abs(stickX) > 0.1f) // Deadzone pour éviter la dérive du stick
+            {
+                rotInput += stickX;
+            }
+
+            // Rotation avec les Bumpers (LB / RB ou L1 / R1)
+            if (Gamepad.current.leftShoulder.isPressed) rotInput -= 1f;
+            if (Gamepad.current.rightShoulder.isPressed) rotInput += 1f;
         }
 
-        // On divise par le nombre total de cibles pour trouver le point central exact
-        return totalPositions / targetCount;
+        // Application de la rotation
+        currentRotationAngle += rotInput * rotationSpeed * Time.deltaTime;
     }
 }
