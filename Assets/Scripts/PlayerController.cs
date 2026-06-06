@@ -43,6 +43,7 @@ public class PlayerController : MonoBehaviour
     // Cette fonction est détectée automatiquement quand tu cliques ou appuies sur la gâchette
     public void OnFire()
     {
+        if (!enabled) return;
         Shoot();
     }
     // -------------------------------

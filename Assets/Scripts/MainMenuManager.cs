@@ -1,12 +1,19 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManager1 : MonoBehaviour
+public class MainMenuManager : MonoBehaviour
 {
-     public void PlaySolo()
+    public void PlaySoloGame()
+{
+    if (GameManager.Instance != null)
     {
-        SceneManager.LoadScene("SampleScene");
+        GameManager.Instance.StartNewGame();
     }
+    else
+    {
+        Debug.LogError("Le GameManager est introuvable !");
+    }
+}
 
     public void OpenMultiplayer()
     {
