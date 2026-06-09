@@ -2,12 +2,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 
-public class GameManager1 : MonoBehaviour
+public class MainMenuManager : MonoBehaviour
 {
     [Header("Transition")]
     public float sceneLoadDelay = 0.25f;
 
-    public void PlaySolo()
+    public void PlaySoloGame()
     {
         StartCoroutine(LoadSoloSceneAfterDelay());
     }
@@ -15,8 +15,16 @@ public class GameManager1 : MonoBehaviour
     private IEnumerator LoadSoloSceneAfterDelay()
     {
         yield return new WaitForSeconds(sceneLoadDelay);
-        SceneManager.LoadScene("Level01");
-    }
+        
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.StartNewGame();
+        }
+        else
+        {
+            Debug.LogError("Le GameManager est introuvable !");
+        }
+     }  
 
     public void OpenMultiplayer()
     {

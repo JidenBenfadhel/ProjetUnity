@@ -16,6 +16,10 @@ public class Projectile : MonoBehaviour
     [Header("Owner")]
     public ProjectileOwner owner;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip hitSound;
+    public AudioClip bounceSound;
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -25,6 +29,21 @@ public class Projectile : MonoBehaviour
     {
         // Propulse le projectile vers l'avant dès sa création
         rb.linearVelocity = transform.forward * speed;
+        if (audioSource != null && owner == ProjectileOwner.Player)
+        {
+            audioSource.PlayOneShot(hitSound);
+        }
+    }
+
+    [Header("Effets Visuels")]
+    public GameObject explosionPrefab;
+
+    private void TriggerExplosion()
+    {
+        if (explosionPrefab != null)
+        {
+            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -37,7 +56,8 @@ public class Projectile : MonoBehaviour
             if (destructible != null && owner == ProjectileOwner.Player)
             {
                 destructible.TakeDamage(1);
-
+    
+                TriggerExplosion(); // On fait apparaître l'explosion   
                 Destroy(gameObject); // Si ça touche un destructible alors le projecticle est détruit
                 return;
             }
@@ -77,6 +97,20 @@ public class Projectile : MonoBehaviour
         else if (collision.gameObject.CompareTag("Projectile"))
         {
             Destroy(collision.gameObject);
+            Destroy(gameObject);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Rigidbody otherRb = other.GetComponentInParent<Rigidbody>();
+        
+        if (otherRb != null && otherRb.CompareTag("Projectile") && otherRb.gameObject != gameObject)
+        {
+            // On déclenche l'explosion sur l'autre balle et sur nous-même
+            TriggerExplosion(); 
+            
+            Destroy(otherRb.gameObject);
             Destroy(gameObject);
         }
     }
