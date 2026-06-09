@@ -7,15 +7,16 @@ public class GameManager1 : MonoBehaviour
     [Header("Transition")]
     public float sceneLoadDelay = 0.25f;
 
-    public void PlaySolo()
+    public void PlaySoloGame()
     {
-        StartCoroutine(LoadSoloSceneAfterDelay());
-    }
-
-    private IEnumerator LoadSoloSceneAfterDelay()
-    {
-        yield return new WaitForSeconds(sceneLoadDelay);
-        SceneManager.LoadScene("Level01");
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.StartNewGame();
+        }
+        else
+        {
+            Debug.LogError("Le GameManager est introuvable !");
+        }
     }
 
     public void OpenMultiplayer()
