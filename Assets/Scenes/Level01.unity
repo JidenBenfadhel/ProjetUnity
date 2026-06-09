@@ -89792,6 +89792,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4248333198785722857, guid: 12aaacbab6a98b14589c523cebeb41c9, type: 3}
+      propertyPath: dodgeRadius
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 4248333198785722857, guid: 12aaacbab6a98b14589c523cebeb41c9, type: 3}
       propertyPath: stopDistance
       value: 10
       objectReference: {fileID: 0}
@@ -96071,6 +96075,10 @@ PrefabInstance:
     - target: {fileID: 1568256217999581501, guid: 2cdde0af0cc502047803b412aee021ad, type: 3}
       propertyPath: difficulty
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1568256217999581501, guid: 2cdde0af0cc502047803b412aee021ad, type: 3}
+      propertyPath: dodgeRadius
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 1568256217999581501, guid: 2cdde0af0cc502047803b412aee021ad, type: 3}
       propertyPath: stopDistance

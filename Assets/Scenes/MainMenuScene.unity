@@ -443,6 +443,14 @@ PrefabInstance:
       propertyPath: transPromptText
       value: 
       objectReference: {fileID: 2123468086}
+    - target: {fileID: 3013466152069879783, guid: a6d53206e7c3caf499033f4741999f9d, type: 3}
+      propertyPath: levelScenes.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3013466152069879783, guid: a6d53206e7c3caf499033f4741999f9d, type: 3}
+      propertyPath: 'levelScenes.Array.data[2]'
+      value: Level03
+      objectReference: {fileID: 0}
     - target: {fileID: 5903491265383741780, guid: a6d53206e7c3caf499033f4741999f9d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 597.4078

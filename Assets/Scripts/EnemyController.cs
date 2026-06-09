@@ -32,6 +32,12 @@ public class EnemyController : MonoBehaviour
     public float moveSpeed = 4f;
     public float stopDistance = 2.5f;
     public float fireRate = 2f;
+
+    [Header("Comportement Defensif (Esquive)")]
+    [Tooltip("Distance a laquelle le tank repere les obus arrivant sur lui")]
+    public float dodgeRadius = 8f;
+    private float strafeTimer = 0f;
+    private int strafeDirection = 1;
     
     [Header("Paramètres Tactiques")]
     public float searchCoverRadius = 20f; // La distance max à laquelle il cherche un mur
@@ -115,6 +121,17 @@ public class EnemyController : MonoBehaviour
 
     private void HandleMovement()
     {
+        // PRIORITE ABSOLUE : S'il y a un obus en approche, on l'esquive
+        Vector3 dodgePoint;
+        if (CheckForIncomingProjectiles(out dodgePoint))
+        {
+            agent.stoppingDistance = 0f; // On force l'arret manuel pour pouvoir manoeuvrer
+            agent.SetDestination(dodgePoint);
+            OrientChassis();
+            return; // On ignore le reste tant qu'on est en danger
+        }
+
+        // Sinon, on applique le comportement offensif classique
         switch (enemyType)
         {
             case AIType.Rusher:
@@ -129,28 +146,61 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    // --- COMPORTEMENT : RUSHER ---
+    // --- COMPORTEMENT : RUSHER  ---
     private void MoveTowardsPlayer()
     {
-        agent.SetDestination(player.position);
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+        // Si le rusher est a portee, il ne reste pas fixe : il tourne autour du joueur
+        if (distanceToPlayer <= stopDistance + 0.5f)
+        {
+            UpdateStrafeDirection(1.5f);
+            Vector3 directionToPlayer = (player.position - transform.position).normalized;
+            Vector3 sideDirection = Vector3.Cross(directionToPlayer, Vector3.up).normalized;
+
+            Vector3 orbitTarget = player.position - directionToPlayer * stopDistance + sideDirection * strafeDirection * 2f;
+            
+            agent.stoppingDistance = 0f;
+            agent.SetDestination(orbitTarget);
+        }
+        else
+        {
+            agent.stoppingDistance = stopDistance;
+            agent.SetDestination(player.position);
+        }
         OrientChassis();
     }
 
-    // --- COMPORTEMENT : TACTICAL ---
+    // --- COMPORTEMENT : TACTICAL  ---
     private void HideBehindCover()
     {
-        // On ne recalcule pas la cachette à chaque image (optimisation des performances)
         searchTimer += Time.deltaTime;
-        if (searchTimer > 1f) // Calcule une nouvelle cachette toutes les secondes
+        if (searchTimer > 1f) 
         {
             FindBestCoverPosition();
             searchTimer = 0f;
         }
 
-        // Si on a trouvé une cachette, on s'y rend
         if (currentCoverPosition != Vector3.zero)
         {
-            agent.SetDestination(currentCoverPosition);
+            float distToCover = Vector3.Distance(transform.position, currentCoverPosition);
+
+            // S'il est bien arrive derriere sa planque, il fait des vas-et-viens de garde
+            if (distToCover < 0.6f)
+            {
+                UpdateStrafeDirection(1.0f);
+                Vector3 directionToPlayer = (player.position - transform.position).normalized;
+                Vector3 sideDirection = Vector3.Cross(directionToPlayer, Vector3.up).normalized;
+
+                Vector3 guardPath = currentCoverPosition + sideDirection * strafeDirection * 1.5f;
+                agent.stoppingDistance = 0f;
+                agent.SetDestination(guardPath);
+            }
+            else
+            {
+                agent.stoppingDistance = 0f;
+                agent.SetDestination(currentCoverPosition);
+            }
             OrientChassis();
         }
     }
@@ -191,16 +241,14 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    // --- COMPORTEMENT : SNIPER ---
+    // --- COMPORTEMENT : SNIPER  ---
     private void MaintainDistance()
     {
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
         if (distanceToPlayer < stopDistance)
         {
-            // On désactive sa distance d'arrêt pour qu'il accepte de rouler vers le point de fuite
             agent.stoppingDistance = 0f;
-
             Vector3 directionAway = (transform.position - player.position).normalized;
             Vector3 fleePosition = transform.position + directionAway * 6f; 
             
@@ -213,18 +261,32 @@ public class EnemyController : MonoBehaviour
         }
         else if (distanceToPlayer > stopDistance + 4f)
         {
-            // On réactive sa distance d'arrêt normale pour qu'il s'arrête de loin
             agent.stoppingDistance = stopDistance;
-
             agent.SetDestination(player.position);
             OrientChassis();
         }
+        // Le sniper fait des pas de cote pour casser la visee du joueur
         else 
         {
-            if (agent.hasPath) 
-            {
-                agent.ResetPath(); 
-            }
+            UpdateStrafeDirection(1.2f);
+            Vector3 directionToPlayer = (player.position - transform.position).normalized;
+            Vector3 sideDirection = Vector3.Cross(directionToPlayer, Vector3.up).normalized;
+
+            Vector3 sniperStrafe = transform.position + sideDirection * strafeDirection * 2f;
+            agent.stoppingDistance = 0f;
+            agent.SetDestination(sniperStrafe);
+            OrientChassis();
+        }
+    }
+
+    // Inverse le sens du mouvement de temps en temps
+    private void UpdateStrafeDirection(float interval)
+    {
+        strafeTimer += Time.deltaTime;
+        if (strafeTimer > interval)
+        {
+            strafeDirection *= -1;
+            strafeTimer = 0f;
         }
     }
 
@@ -331,5 +393,46 @@ public class EnemyController : MonoBehaviour
         
         // Si aucun tir propre n'est possible, on regarde quand même dans la direction du joueur pour être prêt à tirer dès que l'allié s'écartera
         return directAim;
+    }
+
+    // Analyse si un obus fonce sur le tank et calcule un point de fuite lateral
+    private bool CheckForIncomingProjectiles(out Vector3 dodgePoint)
+    {
+        dodgePoint = Vector3.zero;
+
+        Collider[] closeObjects = Physics.OverlapSphere(transform.position, dodgeRadius);
+        foreach (Collider col in closeObjects)
+        {
+            if (col.CompareTag("Projectile"))
+            {
+                Rigidbody projRb = col.GetComponent<Rigidbody>();
+                if (projRb != null)
+                {
+                    Vector3 projVelocity = projRb.linearVelocity;
+                    Vector3 toEnemy = (transform.position - col.transform.position);
+
+                    if (Vector3.Dot(projVelocity.normalized, toEnemy.normalized) > 0.7f)
+                    {
+                        Vector3 escapeDirection = Vector3.Cross(projVelocity, Vector3.up).normalized;
+
+                        Vector3 optionA = transform.position + escapeDirection * 3f;
+                        Vector3 optionB = transform.position - escapeDirection * 3f;
+
+                        NavMeshHit navHit;
+                        if (NavMesh.SamplePosition(optionA, out navHit, 3f, NavMesh.AllAreas))
+                        {
+                            dodgePoint = navHit.position;
+                            return true;
+                        }
+                        if (NavMesh.SamplePosition(optionB, out navHit, 3f, NavMesh.AllAreas))
+                        {
+                            dodgePoint = navHit.position;
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

@@ -8,6 +8,20 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 5f;
     public float turnSpeed = 12f;
 
+    [Header("Cadence de Tir (Arcade)")]
+    [Tooltip("Nombre maximum de balles d'affilée avant la surchauffe")]
+    public int maxShotsInRow = 3;
+    [Tooltip("Temps d'attente (cooldown) après avoir vidé le chargeur")]
+    public float burstCooldown = 1.2f;
+    [Tooltip("Temps d'attente minimum obligatoire entre deux clics")]
+    public float delayBetweenShots = 0.15f;
+    [Tooltip("Temps sans tirer nécessaire pour récupérer toutes ses balles automatiquement")]
+    public float burstResetDelay = 0.8f;
+
+    private int currentShotsFired = 0;
+    private float cooldownEndTimestamp = 0f;
+    private float lastShotTimestamp = 0f;
+
     [Header("Animation & Game Feel")]
     public Transform bodyMesh;
     public float wobbleSpeed = 20f;
@@ -44,7 +58,25 @@ public class PlayerController : MonoBehaviour
     public void OnFire()
     {
         if (!enabled) return;
+
+        if (Time.time < cooldownEndTimestamp) return;
+
+        if (Time.time < lastShotTimestamp + delayBetweenShots) return;
+
+        if (Time.time > lastShotTimestamp + burstResetDelay)
+        {
+            currentShotsFired = 0;
+        }
+
         Shoot();
+        currentShotsFired++;
+        lastShotTimestamp = Time.time;
+
+        if (currentShotsFired >= maxShotsInRow)
+        {
+            cooldownEndTimestamp = Time.time + burstCooldown;
+            currentShotsFired = 0; 
+        }
     }
     // -------------------------------
 
