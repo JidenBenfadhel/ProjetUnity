@@ -23,6 +23,9 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI hudLevelNameText;
     public TextMeshProUGUI hudEnemiesRemainingText;
 
+    [Header("UI : How To Play")]
+    public GameObject howToPlayPanel; // Glisse ici ton 'HowToPlay_Panel' dans l'éditeur
+
     private int currentLevelIndex = 0;
     private int totalEnemiesDefeated = 0;
     private int totalEnemiesInCurrentLevel = 0;
@@ -30,6 +33,7 @@ public class GameManager : MonoBehaviour
 
     private bool isWaitingForInput = false;
     private bool isDefeatScreen = false;
+    private bool isWaitingForHowToPlay = false;
 
     private void Awake()
     {
@@ -54,27 +58,46 @@ public class GameManager : MonoBehaviour
     }
 
     private void Update()
+{
+    if (isWaitingForInput)
     {
-        if (isWaitingForInput)
+        bool gamepadPressed = false;
+        if (Gamepad.current != null)
         {
-            if ((Keyboard.current != null && Keyboard.current.anyKey.wasPressedThisFrame) ||
-                (Pointer.current != null && Pointer.current.press.wasPressedThisFrame))
+            if (Gamepad.current.aButton.wasPressedThisFrame ||
+                Gamepad.current.bButton.wasPressedThisFrame ||
+                Gamepad.current.xButton.wasPressedThisFrame ||
+                Gamepad.current.yButton.wasPressedThisFrame ||
+                Gamepad.current.startButton.wasPressedThisFrame)
+            {
+                gamepadPressed = true;
+            }
+        }
+
+        if ((Keyboard.current != null && Keyboard.current.anyKey.wasPressedThisFrame) ||
+            (Pointer.current != null && Pointer.current.press.wasPressedThisFrame) ||
+            gamepadPressed)
+        {
+            if (isWaitingForHowToPlay)
+            {
+                isWaitingForHowToPlay = false;
+                isWaitingForInput = false; // On coupe l'attente, InitLevelRoutine va prendre le relais
+            }
+            else if (isDefeatScreen)
+            {
+                isDefeatScreen = false;
+                isWaitingForInput = false;
+                transitionPanel.SetActive(false);
+                SceneManager.LoadScene("MainMenuScene");
+            }
+            else
             {
                 isWaitingForInput = false;
-                
-                if (isDefeatScreen)
-                {
-                    isDefeatScreen = false;
-                    transitionPanel.SetActive(false);
-                    SceneManager.LoadScene("MainMenuScene");
-                }
-                else
-                {
-                    StartLevel(); 
-                }
+                StartLevel(); 
             }
         }
     }
+}
 
     // Declenche au chargement d'une map
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -92,27 +115,48 @@ public class GameManager : MonoBehaviour
     {
         gameEnded = false;
         isWaitingForInput = false;
+        isWaitingForHowToPlay = false;
 
         // Compte les ennemis presents
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         totalEnemiesInCurrentLevel = enemies.Length;
 
-        // On fige tout au chargement
+        // On fige tout au chargement technique de la map
         FreezeAllTanks(true);
 
-        // On affiche les donnees sur le panneau de transition
+        if (currentLevelIndex == 0) 
+        {
+            transitionPanel.SetActive(false);
+            howToPlayPanel.SetActive(true);
+
+            isWaitingForHowToPlay = true;
+            isWaitingForInput = true;
+            
+            // On attend sagement ici que le Update() passe isWaitingForHowToPlay a false
+            while (isWaitingForHowToPlay)
+            {
+                yield return null; 
+            }
+            
+            howToPlayPanel.SetActive(false);
+        }
+        // --------------------------------------------------
+
+        transitionPanel.SetActive(true);
+
+        // On affiche les donnees sur le panneau de transition beige
         transLevelNameText.text = $"NIVEAU 0{currentLevelIndex + 1}";
         transLevelEnemiesText.text = $"Ennemis dans ce niveau : {totalEnemiesInCurrentLevel}";
         transTotalKillsText.text = $"Ennemis battus a present : {totalEnemiesDefeated}";
-        
+
         UpdateHUD();
 
-        // On affiche le prompt immediatement sur l'ecran beige
+        // On affiche le prompt "Appuyez pour continuer" sur l'ecran beige
         transPromptText.text = "APPUYEZ SUR UNE TOUCHE POUR CONTINUER";
         transPromptText.gameObject.SetActive(true);
         
+        // On active l'attente de touche pour l'ecran beige
         isWaitingForInput = true;
-        yield return null;
     }
 
     public void StartNewGame()

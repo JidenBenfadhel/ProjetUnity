@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
     private Vector2 moveInput; // On stocke l'input 2D (ZQSD ou Joystick gauche)
     private Camera mainCam;
+    private bool isGamepadMode = false;
 
     private void Awake()
     {
@@ -82,7 +83,36 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        AimWithMouse();
+        float turretRotateInput = 0f;
+        if (Gamepad.current != null)
+        {
+            if (Gamepad.current.xButton.isPressed) turretRotateInput -= 1f; // Bouton X : Tourne a gauche
+            if (Gamepad.current.aButton.isPressed) turretRotateInput += 1f; // Bouton A : Tourne a droite
+            if (Gamepad.current.bButton.isPressed) turretRotateInput += 1f; // Bouton B : Tourne a droite
+            if (Gamepad.current.yButton.isPressed) turretRotateInput -= 1f; // Bouton Y : Tourne a gauche
+        }
+
+        if (Mouse.current != null && Mouse.current.delta.ReadValue().sqrMagnitude > 1f)
+        {
+            isGamepadMode = false;
+        }
+        if (Mathf.Abs(turretRotateInput) > 0.05f)
+        {
+            isGamepadMode = true;
+        }
+
+        if (isGamepadMode)
+        {
+            if (Mathf.Abs(turretRotateInput) > 0.05f)
+            {
+                turretTransform.Rotate(Vector3.up, turretRotateInput * 120f * Time.deltaTime);
+            }
+        }
+        else
+        {
+            AimWithMouse();
+        }
+
         HandleAnimation();
     }
 
