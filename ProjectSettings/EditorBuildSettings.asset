@@ -15,12 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Level01.unity
     guid: 11f3d63b0a6f2574fbff874e8503ce41
   - enabled: 0
-    path: Assets/Scenes/Level01-tank.unity
-    guid: eea89b6539a2f8e4dbf6ee052e6f6746
-  - enabled: 0
     path: Assets/Scenes/Level01.unity
     guid: 11f3d63b0a6f2574fbff874e8503ce41
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Level01.unity
     guid: 11f3d63b0a6f2574fbff874e8503ce41
   - enabled: 1
@@ -29,6 +26,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Level03.unity
     guid: e4596963d64d10a47b73fe3c35152fc5
+  - enabled: 1
+    path: Assets/Scenes/Level04.unity
+    guid: 5e8609f511a5e8b4d9b5494545588665
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
