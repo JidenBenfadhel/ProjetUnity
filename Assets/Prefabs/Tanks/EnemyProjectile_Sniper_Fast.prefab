@@ -212,9 +212,10 @@ MonoBehaviour:
   speed: 16
   maxBounces: 1
   owner: 0
-  audioSource: {fileID: 0}
-  hitSound: {fileID: 0}
-  bounceSound: {fileID: 0}
+  bounceSound: {fileID: 8300000, guid: 0ced3d6617adbf9469162fd077200224, type: 3}
+  bounceVolume: 1
+  explosionSound: {fileID: 8300000, guid: 70f0e18ae60836c45863aadf7c753ae1, type: 3}
+  explosionVolume: 1
   explosionPrefab: {fileID: 4968188055287511582, guid: 8df71deeca6cafb49bca99b07c190d46, type: 3}
 --- !u!96 &8379097137020305104
 TrailRenderer:

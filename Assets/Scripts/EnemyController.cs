@@ -18,6 +18,11 @@ public class EnemyController : MonoBehaviour
     public float trackScrollSpeed = 0.5f;
     public bool scrollXAxis = false;
 
+    [Header("Audio")]
+    public AudioClip shootSound;
+    [Range(0f, 1f)] public float shootVolume = 0.8f;
+    private AudioSource audioSource;
+
     [Header("Configuration IA")]
     public AIType enemyType = AIType.Rusher;
     public DifficultyLevel difficulty = DifficultyLevel.Level1;
@@ -57,7 +62,13 @@ public class EnemyController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         agent.speed = moveSpeed;
         agent.stoppingDistance = stopDistance;
-        agent.updateRotation = false; 
+        agent.updateRotation = false;
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
 
     private void Start() 
@@ -331,6 +342,10 @@ public class EnemyController : MonoBehaviour
                 
                 if (angleToTarget < 5f)
                 {
+                    if (audioSource != null && shootSound != null)
+                    {
+                        audioSource.PlayOneShot(shootSound, shootVolume);
+                    }
                     // On choisit la balle en fonction du profil de l'ennemi
                     GameObject prefabToShoot = (enemyType == AIType.Sniper) ? sniperProjectilePrefab : standardProjectilePrefab;
                     

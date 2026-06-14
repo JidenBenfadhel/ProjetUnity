@@ -3,6 +3,7 @@ using TMPro;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem; 
+using UnityEngine.EventSystems; // Requis pour le focus manette
 
 public class GameManager : MonoBehaviour
 {
@@ -23,8 +24,27 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI hudLevelNameText;
     public TextMeshProUGUI hudEnemiesRemainingText;
 
-    [Header("UI : How To Play")]
-    public GameObject howToPlayPanel; // Glisse ici ton 'HowToPlay_Panel' dans l'éditeur
+    [Header("UI : Écrans Spéciaux")]
+    public GameObject howToPlayPanel; 
+
+    [Header("UI : Système de Pause")]
+    public GameObject pausePanel;
+    public GameObject firstPauseButton;  
+
+    [Header("Configuration Joueur")]
+    public Color playerSelectedColor = Color.gray;
+
+    [Header("Audio : Musiques")]
+    public AudioClip startGameSFX;   
+    public AudioClip bgMusic;        
+    [Range(0f, 1f)] public float musicVolume = 0.5f; 
+    private AudioSource audioSource;
+
+    [Header("Audio : Événements de Fin")]
+    public AudioClip levelVictorySFX;   
+    public AudioClip gameVictorySFX;    
+    public AudioClip defeatSFX;         
+    [Range(0f, 1f)] public float eventSFXVolume = 0.8f;
 
     private int currentLevelIndex = 0;
     private int totalEnemiesDefeated = 0;
@@ -34,6 +54,7 @@ public class GameManager : MonoBehaviour
     private bool isWaitingForInput = false;
     private bool isDefeatScreen = false;
     private bool isWaitingForHowToPlay = false;
+    private bool isPaused = false; // Flag pour savoir si le jeu est en pause
 
     private void Awake()
     {
@@ -44,6 +65,12 @@ public class GameManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
 
     private void Start()
@@ -58,48 +85,95 @@ public class GameManager : MonoBehaviour
     }
 
     private void Update()
-{
-    if (isWaitingForInput)
     {
-        bool gamepadPressed = false;
-        if (Gamepad.current != null)
+        if (SceneManager.GetActiveScene().name != "MainMenuScene" && !gameEnded && !isWaitingForHowToPlay && !isWaitingForInput)
         {
-            if (Gamepad.current.aButton.wasPressedThisFrame ||
-                Gamepad.current.bButton.wasPressedThisFrame ||
-                Gamepad.current.xButton.wasPressedThisFrame ||
-                Gamepad.current.yButton.wasPressedThisFrame ||
-                Gamepad.current.startButton.wasPressedThisFrame)
+            bool pauseKeyPressed = (Keyboard.current != null && Keyboard.current.pKey.wasPressedThisFrame);
+            bool pauseGamepadPressed = (Gamepad.current != null && Gamepad.current.startButton.wasPressedThisFrame);
+
+            if (pauseKeyPressed || pauseGamepadPressed)
             {
-                gamepadPressed = true;
+                if (isPaused) ResumeGame();
+                else PauseGame();
+                return;
             }
         }
 
-        if ((Keyboard.current != null && Keyboard.current.anyKey.wasPressedThisFrame) ||
-            (Pointer.current != null && Pointer.current.press.wasPressedThisFrame) ||
-            gamepadPressed)
+        if (isPaused) return;
+
+        if (isWaitingForInput)
         {
-            if (isWaitingForHowToPlay)
+            bool gamepadPressed = false;
+            if (Gamepad.current != null)
             {
-                isWaitingForHowToPlay = false;
-                isWaitingForInput = false; // On coupe l'attente, InitLevelRoutine va prendre le relais
+                if (Gamepad.current.aButton.wasPressedThisFrame ||
+                    Gamepad.current.bButton.wasPressedThisFrame ||
+                    Gamepad.current.xButton.wasPressedThisFrame ||
+                    Gamepad.current.yButton.wasPressedThisFrame ||
+                    Gamepad.current.startButton.wasPressedThisFrame)
+                {
+                    gamepadPressed = true;
+                }
             }
-            else if (isDefeatScreen)
+
+            if ((Keyboard.current != null && Keyboard.current.anyKey.wasPressedThisFrame) ||
+                (Pointer.current != null && Pointer.current.press.wasPressedThisFrame) ||
+                gamepadPressed)
             {
-                isDefeatScreen = false;
-                isWaitingForInput = false;
-                transitionPanel.SetActive(false);
-                SceneManager.LoadScene("MainMenuScene");
-            }
-            else
-            {
-                isWaitingForInput = false;
-                StartLevel(); 
+                if (isWaitingForHowToPlay)
+                {
+                    isWaitingForHowToPlay = false;
+                    isWaitingForInput = false; 
+                }
+                else if (isDefeatScreen)
+                {
+                    isDefeatScreen = false;
+                    isWaitingForInput = false;
+                    transitionPanel.SetActive(false);
+                    SceneManager.LoadScene("MainMenuScene");
+                }
+                else
+                {
+                    isWaitingForInput = false;
+                    StartLevel(); 
+                }
             }
         }
     }
-}
 
-    // Declenche au chargement d'une map
+    public void PauseGame()
+    {
+        isPaused = true;
+        Time.timeScale = 0f; 
+        if (pausePanel != null) pausePanel.SetActive(true);
+
+        // Force le focus de la manette sur le bouton Reprendre
+        if (firstPauseButton != null && EventSystem.current != null)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+            EventSystem.current.SetSelectedGameObject(firstPauseButton);
+        }
+        
+        if (audioSource != null) audioSource.Pause(); 
+    }
+
+    public void ResumeGame()
+    {
+        isPaused = false;
+        Time.timeScale = 1f;
+        if (pausePanel != null) pausePanel.SetActive(false);
+        
+        if (audioSource != null) audioSource.UnPause();
+    }
+
+    public void QuitToMenu()
+    {
+        isPaused = false;
+        Time.timeScale = 1f;
+        if (pausePanel != null) pausePanel.SetActive(false);
+        SceneManager.LoadScene("MainMenuScene");
+    }
+
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name == "MainMenuScene")
@@ -116,12 +190,12 @@ public class GameManager : MonoBehaviour
         gameEnded = false;
         isWaitingForInput = false;
         isWaitingForHowToPlay = false;
+        isPaused = false;
+        Time.timeScale = 1f;
 
-        // Compte les ennemis presents
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         totalEnemiesInCurrentLevel = enemies.Length;
 
-        // On fige tout au chargement technique de la map
         FreezeAllTanks(true);
 
         if (currentLevelIndex == 0) 
@@ -132,7 +206,6 @@ public class GameManager : MonoBehaviour
             isWaitingForHowToPlay = true;
             isWaitingForInput = true;
             
-            // On attend sagement ici que le Update() passe isWaitingForHowToPlay a false
             while (isWaitingForHowToPlay)
             {
                 yield return null; 
@@ -140,22 +213,18 @@ public class GameManager : MonoBehaviour
             
             howToPlayPanel.SetActive(false);
         }
-        // --------------------------------------------------
 
         transitionPanel.SetActive(true);
 
-        // On affiche les donnees sur le panneau de transition beige
         transLevelNameText.text = $"NIVEAU 0{currentLevelIndex + 1}";
         transLevelEnemiesText.text = $"Ennemis dans ce niveau : {totalEnemiesInCurrentLevel}";
         transTotalKillsText.text = $"Ennemis battus a present : {totalEnemiesDefeated}";
 
         UpdateHUD();
 
-        // On affiche le prompt "Appuyez pour continuer" sur l'ecran beige
         transPromptText.text = "APPUYEZ SUR UNE TOUCHE POUR CONTINUER";
         transPromptText.gameObject.SetActive(true);
         
-        // On active l'attente de touche pour l'ecran beige
         isWaitingForInput = true;
     }
 
@@ -185,8 +254,18 @@ public class GameManager : MonoBehaviour
         transitionPanel.SetActive(true);
         transPromptText.gameObject.SetActive(false); 
 
+        if (audioSource != null) audioSource.Stop();
+
         if (sceneName == "MainMenuScene" && isGameFinished)
         {
+            if (audioSource != null && gameVictorySFX != null)
+            {
+                audioSource.clip = gameVictorySFX;
+                audioSource.loop = false;
+                audioSource.volume = eventSFXVolume;
+                audioSource.Play();
+            }
+
             transLevelNameText.text = "VICTOIRE TOTALE !";
             transLevelEnemiesText.text = "Felicitations !";
             transTotalKillsText.text = $"Total Ennemis Battus : {totalEnemiesDefeated}";
@@ -198,6 +277,14 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            if (currentLevelIndex > 0 && audioSource != null && levelVictorySFX != null)
+            {
+                audioSource.clip = levelVictorySFX;
+                audioSource.loop = false;
+                audioSource.volume = eventSFXVolume;
+                audioSource.Play();
+            }
+
             transLevelNameText.text = $"NIVEAU 0{currentLevelIndex + 1}";
             transLevelEnemiesText.text = "Preparation de l'arene...";
             transTotalKillsText.text = $"Ennemis battus a present : {totalEnemiesDefeated}";
@@ -209,7 +296,6 @@ public class GameManager : MonoBehaviour
 
     private void StartLevel()
     {
-        // On passe par une Co-routine pour pouvoir integrer le delai de 3 secondes
         StartCoroutine(StartLevelWithDelayRoutine());
     }
 
@@ -218,13 +304,27 @@ public class GameManager : MonoBehaviour
         transitionPanel.SetActive(false);
         hudPanel.SetActive(true);
 
-        // On maintient le blocage des tanks pendant que le joueur analyse la scene
+        if (audioSource != null && startGameSFX != null)
+        {
+            audioSource.clip = startGameSFX;
+            audioSource.loop = false;
+            audioSource.volume = musicVolume;
+            audioSource.Play();
+        }
+
         FreezeAllTanks(true);
 
-        // PAUSE DE 3 SECONDES AVANT DE SE LANCER
         yield return new WaitForSeconds(3.0f);
 
         FreezeAllTanks(false);
+
+        if (audioSource != null && bgMusic != null)
+        {
+            audioSource.clip = bgMusic;
+            audioSource.loop = true;
+            audioSource.volume = musicVolume;
+            audioSource.Play();
+        }
     }
 
     public void PlayerDied()
@@ -237,11 +337,20 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator DefeatSequence()
     {
+        if (audioSource != null) audioSource.Stop();
         FreezeAllTanks(true);
-        yield return new WaitForSeconds(2.0f); // 2 secondes de freeze sur ta mort avant l'ecran
+        yield return new WaitForSeconds(2.0f); 
 
         hudPanel.SetActive(false);
         transitionPanel.SetActive(true);
+
+        if (audioSource != null && defeatSFX != null)
+        {
+            audioSource.clip = defeatSFX;
+            audioSource.loop = false;
+            audioSource.volume = eventSFXVolume;
+            audioSource.Play();
+        }
 
         isDefeatScreen = true;
         transLevelNameText.text = "GAME OVER !";
@@ -277,8 +386,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator VictorySequence()
     {
         FreezeAllTanks(true);
-        yield return new WaitForSeconds(2.0f); // Le jeu reste fige sur le terrain pendant 2 secondes de victoire
-        
+        yield return new WaitForSeconds(2.0f); 
         LoadNextLevelSequence();
     }
 
@@ -296,11 +404,15 @@ public class GameManager : MonoBehaviour
 
     private void SetupUIForMenu()
     {
+        if (audioSource != null) audioSource.Stop();
         isWaitingForInput = false;
         isDefeatScreen = false;
+        isPaused = false;
+        Time.timeScale = 1f; // Sécurité réactivation du temps
         transLevelNameText.color = Color.white;
         if (transitionPanel != null) transitionPanel.SetActive(false);
         if (hudPanel != null) hudPanel.SetActive(false);
+        if (pausePanel != null) pausePanel.SetActive(false);
     }
 
     private void FreezeAllTanks(bool freeze)

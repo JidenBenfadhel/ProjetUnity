@@ -17,9 +17,10 @@ public class Projectile : MonoBehaviour
     public ProjectileOwner owner;
 
     [Header("Audio")]
-    public AudioSource audioSource;
-    public AudioClip hitSound;
     public AudioClip bounceSound;
+    [Range(0f, 1f)] public float bounceVolume = 1f;
+    public AudioClip explosionSound;
+    [Range(0f, 1f)] public float explosionVolume = 0.7f;
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -29,10 +30,6 @@ public class Projectile : MonoBehaviour
     {
         // Propulse le projectile vers l'avant dès sa création
         rb.linearVelocity = transform.forward * speed;
-        if (audioSource != null && owner == ProjectileOwner.Player)
-        {
-            audioSource.PlayOneShot(hitSound);
-        }
     }
 
     [Header("Effets Visuels")]
@@ -40,6 +37,10 @@ public class Projectile : MonoBehaviour
 
     private void TriggerExplosion()
     {
+        if (explosionSound != null)
+        {
+            AudioSource.PlayClipAtPoint(explosionSound, transform.position, explosionVolume);
+        }
         if (explosionPrefab != null)
         {
             Instantiate(explosionPrefab, transform.position, Quaternion.identity);
@@ -62,6 +63,11 @@ public class Projectile : MonoBehaviour
                 return;
             }
 
+            if (bounceSound != null)
+            {
+                AudioSource.PlayClipAtPoint(bounceSound, transform.position, bounceVolume);
+            }
+
             currentBounces++;
             if (currentBounces > maxBounces)
             {
@@ -77,7 +83,7 @@ public class Projectile : MonoBehaviour
             {
                 playerHealth.TakeDamage(1);
             }
-
+            TriggerExplosion();
             Destroy(gameObject);
         }
 
@@ -90,6 +96,7 @@ public class Projectile : MonoBehaviour
                 enemyHealth.TakeDamage(1);
             }
 
+            TriggerExplosion();
             Destroy(gameObject);
         }
 

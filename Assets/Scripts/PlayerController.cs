@@ -18,6 +18,11 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Temps sans tirer nécessaire pour récupérer toutes ses balles automatiquement")]
     public float burstResetDelay = 0.8f;
 
+    [Header("Audio")]
+    public AudioClip shootSound;
+    [Range(0f, 1f)] public float shootVolume = 0.8f;
+    private AudioSource audioSource;
+
     private int currentShotsFired = 0;
     private float cooldownEndTimestamp = 0f;
     private float lastShotTimestamp = 0f;
@@ -47,6 +52,12 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         mainCam = Camera.main;
+        
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
 
     // Cette fonction est détectée automatiquement quand tu utilises les touches de déplacement
@@ -204,6 +215,11 @@ public class PlayerController : MonoBehaviour
 
     private void Shoot()
     {
+        if (audioSource != null && shootSound != null)
+        {
+            audioSource.PlayOneShot(shootSound, shootVolume);
+        }
+
         Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
     }
 }

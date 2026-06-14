@@ -159,6 +159,7 @@ GameObject:
   - component: {fileID: 651232441713164596}
   - component: {fileID: 3215320266783527484}
   - component: {fileID: 22857588894599748}
+  - component: {fileID: 5250017642977670464}
   m_Layer: 7
   m_Name: PlayerTankV2
   m_TagString: Player
@@ -226,6 +227,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 5
   turnSpeed: 12
+  maxShotsInRow: 3
+  burstCooldown: 1.2
+  delayBetweenShots: 0.15
+  burstResetDelay: 0.8
+  shootSound: {fileID: 8300000, guid: d4634fd1a6b3d4344aaf7a5cf5686fb6, type: 3}
+  shootVolume: 0.1
   bodyMesh: {fileID: 7186837147914546399}
   wobbleSpeed: 20
   wobbleAmount: 1.5
@@ -284,6 +291,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   health: 1
   explosionPrefab: {fileID: 5814163796361930292, guid: 87ea843b43b124b4797e60d332c18b31, type: 3}
+--- !u!114 &5250017642977670464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 735065863608629099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f8f8bcc6048324ab2005b19d0db237, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TankColorApplier
+  tankBaseMaterial: {fileID: 2100000, guid: 98107e2e30826ea4d90e228424acc153, type: 2}
 --- !u!1 &1562912784755284314
 GameObject:
   m_ObjectHideFlags: 0
@@ -350,7 +370,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7d12033551104574ebf78391cf9f8b40, type: 2}
+  - {fileID: 2100000, guid: 30950fff99c5ccd4f85905dc6f09b870, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -512,7 +532,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7d12033551104574ebf78391cf9f8b40, type: 2}
+  - {fileID: 2100000, guid: 30950fff99c5ccd4f85905dc6f09b870, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1301,7 +1321,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7d12033551104574ebf78391cf9f8b40, type: 2}
+  - {fileID: 2100000, guid: 30950fff99c5ccd4f85905dc6f09b870, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1481,7 +1501,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7d12033551104574ebf78391cf9f8b40, type: 2}
+  - {fileID: 2100000, guid: 30950fff99c5ccd4f85905dc6f09b870, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1842,7 +1862,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7d12033551104574ebf78391cf9f8b40, type: 2}
+  - {fileID: 2100000, guid: 50ae672eaf06e824d92418a698b1a6a6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2591,7 +2611,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7d12033551104574ebf78391cf9f8b40, type: 2}
+  - {fileID: 2100000, guid: 50ae672eaf06e824d92418a698b1a6a6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
