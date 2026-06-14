@@ -385,6 +385,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator VictorySequence()
     {
+        if (audioSource != null) audioSource.Stop();
         FreezeAllTanks(true);
         yield return new WaitForSeconds(2.0f); 
         LoadNextLevelSequence();
