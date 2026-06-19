@@ -3722,7 +3722,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4408661954699705156, guid: 9875d18540dc74cfdb4119e60d5c7d93, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7203762324835953443}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 526819759291212325, guid: 9875d18540dc74cfdb4119e60d5c7d93, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8687545924001002317}
   m_SourcePrefab: {fileID: 100100000, guid: 9875d18540dc74cfdb4119e60d5c7d93, type: 3}
 --- !u!4 &670437880113174574 stripped
 Transform:
@@ -3734,6 +3737,24 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3306129729887056173, guid: 9875d18540dc74cfdb4119e60d5c7d93, type: 3}
   m_PrefabInstance: {fileID: 3774976377371698026}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &3687545138567872847 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 526819759291212325, guid: 9875d18540dc74cfdb4119e60d5c7d93, type: 3}
+  m_PrefabInstance: {fileID: 3774976377371698026}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8687545924001002317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3687545138567872847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 642b1906a8560244eb35b79e4ccd2357, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterDetector
+  explosionPrefab: {fileID: 5814163796361930292, guid: 87ea843b43b124b4797e60d332c18b31, type: 3}
 --- !u!4 &3926966829692885416 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 152008054444735170, guid: 9875d18540dc74cfdb4119e60d5c7d93, type: 3}
