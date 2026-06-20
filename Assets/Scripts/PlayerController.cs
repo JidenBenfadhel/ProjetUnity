@@ -42,6 +42,7 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundMask;
     public GameObject projectilePrefab;
     public Transform firePoint;
+    public float projectileSpeed = 10f;
 
     private Rigidbody rb;
     private Vector2 moveInput; // On stocke l'input 2D (ZQSD ou Joystick gauche)
@@ -220,6 +221,10 @@ public class PlayerController : MonoBehaviour
             audioSource.PlayOneShot(shootSound, shootVolume);
         }
 
-        Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+        GameObject obj = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+        Projectile projectile = obj.GetComponent<Projectile>();
+
+        if (projectile != null)
+            projectile.speed = projectileSpeed;
     }
 }
