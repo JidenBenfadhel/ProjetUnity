@@ -2,15 +2,12 @@ using UnityEngine;
 
 public class LifeBoost : Boost
 {
-    [SerializeField] private int healAmount = 1;
-
     public override void Apply(Collider player)
     {
-        PlayerHealth hp = player.GetComponentInParent<PlayerHealth>();
-
-        if (hp != null)
+        PlayerPowerUpManager manager = player.GetComponentInParent<PlayerPowerUpManager>();
+        if (manager != null)
         {
-            hp.health += 1;
+            manager.ActivateShieldBoost();
         }
     }
 }

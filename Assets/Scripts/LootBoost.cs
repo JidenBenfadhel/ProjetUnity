@@ -3,12 +3,12 @@ using UnityEngine;
 public class BonusLoot : MonoBehaviour
 {
     [SerializeField] private Boost boost;
-
     [SerializeField] private float rotationSpeed = 60f;
+    [Header("Audio")]
+    [SerializeField] private AudioClip pickupSFX;
 
     private Vector3 startPos;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
         startPos = transform.position;
@@ -23,9 +23,14 @@ public class BonusLoot : MonoBehaviour
     {
         if (entity.CompareTag("Player") && boost != null)
         {
+            // On joue le son de récupération
+            if (pickupSFX != null)
+            {
+                AudioSource.PlayClipAtPoint(pickupSFX, transform.position, 1.0f);
+            }
+
             boost.Apply(entity);
             Destroy(gameObject);
         }
-        
     }
 }

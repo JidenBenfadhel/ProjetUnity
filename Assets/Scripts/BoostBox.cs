@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class NewMonoBehaviourScript : MonoBehaviour
 {
-
     [SerializeField] private GameObject[] boosts;
-
+    [Header("Audio")]
+    [SerializeField] private AudioClip discoverSFX;
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -19,6 +19,12 @@ public class NewMonoBehaviourScript : MonoBehaviour
 
     private void DestroyBox()
     {
+        // On joue le son pile a l'emplacement de la caisse avant sa destruction
+        if (discoverSFX != null)
+        {
+            AudioSource.PlayClipAtPoint(discoverSFX, transform.position, 1.0f);
+        }
+
         SpawnRandomBoost(); 
         Destroy(gameObject);
     }

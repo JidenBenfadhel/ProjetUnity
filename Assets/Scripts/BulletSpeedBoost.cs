@@ -6,11 +6,10 @@ public class BulletSpeedBoost : Boost
 
     public override void Apply(Collider player)
     {
-        PlayerController controller = player.GetComponentInParent<PlayerController>();
-
-        if (controller != null)
+        PlayerPowerUpManager manager = player.GetComponentInParent<PlayerPowerUpManager>();
+        if (manager != null)
         {
-            controller.projectileSpeed *= speedRatio;
+            manager.ActivateBulletSpeedBoost(speedRatio, 5f);
         }
     }
 }

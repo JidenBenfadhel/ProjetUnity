@@ -14,15 +14,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a6504feda3e7e4a4ba700d3e9db8cf26, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a6504feda3e7e4a4ba700d3e9db8cf26, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a6504feda3e7e4a4ba700d3e9db8cf26, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a6504feda3e7e4a4ba700d3e9db8cf26, type: 3}
       propertyPath: m_LocalRotation.w
@@ -65,7 +65,7 @@ PrefabInstance:
       addedObject: {fileID: 178740793707116727}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a6504feda3e7e4a4ba700d3e9db8cf26, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5031989144778296035}
+      addedObject: {fileID: 5641052530474455047}
   m_SourcePrefab: {fileID: 100100000, guid: a6504feda3e7e4a4ba700d3e9db8cf26, type: 3}
 --- !u!1 &5467707224323681791 stripped
 GameObject:
@@ -94,7 +94,7 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4948950549715441396, guid: a6504feda3e7e4a4ba700d3e9db8cf26, type: 3}
---- !u!114 &5031989144778296035
+--- !u!114 &5641052530474455047
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -103,9 +103,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 5467707224323681791}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e843f1fc9c235549ac71874d46968fc, type: 3}
+  m_Script: {fileID: 11500000, guid: 78318dcbe657413419853f6aae24cda4, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BonusLoot
-  floatHeight: 0.25
-  floatSpeed: 2
-  rotationSpeed: 60
+  m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
+  boosts:
+  - {fileID: 6268208966135699746, guid: 3999277335d030040b7c7e665fa8de14, type: 3}
+  - {fileID: 6268208966135699746, guid: 576a6df6a98523b4abaa435c9d029987, type: 3}
+  - {fileID: 6268208966135699746, guid: 64a7380cb9ba5b240bd6d2100a62c204, type: 3}
+  discoverSFX: {fileID: 8300000, guid: 64803c4ba6b957f42a364e539893af76, type: 3}

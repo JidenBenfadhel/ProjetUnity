@@ -44,9 +44,9 @@ GameObject:
   - component: {fileID: -8928790334619957907}
   - component: {fileID: -3012275459547364228}
   - component: {fileID: -2890800081730466244}
-  - component: {fileID: -2616180245314377953}
+  - component: {fileID: -6938113346119323337}
   m_Layer: 0
-  m_Name: MoveSpeedBonus
+  m_Name: LifeBonus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -117,7 +117,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: a5dd10d0e521ed044a089037100d1869, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b3b912a088c58864c8e7cbcb602757d3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -187,9 +187,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e843f1fc9c235549ac71874d46968fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BonusLoot
-  boost: {fileID: -2616180245314377953}
+  boost: {fileID: -6938113346119323337}
   rotationSpeed: 60
---- !u!114 &-2616180245314377953
+  pickupSFX: {fileID: 8300000, guid: 49af1153a15864a4b8008ae4ffc40043, type: 3}
+--- !u!114 &-6938113346119323337
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -198,7 +199,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 6268208966135699746}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b234f0a907eb51a4c8c2739e6d00b4b5, type: 3}
+  m_Script: {fileID: 11500000, guid: 4f42bc578032e404b8d6deb571133361, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MoveSpeedBoost
-  moveSpeed: 3
+  m_EditorClassIdentifier: Assembly-CSharp::LifeBoost
