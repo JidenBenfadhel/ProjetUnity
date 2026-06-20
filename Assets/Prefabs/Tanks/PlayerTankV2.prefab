@@ -4997,6 +4997,7 @@ GameObject:
   - component: {fileID: 22857588894599748}
   - component: {fileID: 5250017642977670464}
   - component: {fileID: 8184756775332705994}
+  - component: {fileID: 7587510500990453499}
   m_Layer: 7
   m_Name: PlayerTankV2
   m_TagString: Player
@@ -5157,6 +5158,19 @@ MonoBehaviour:
   speedAura: {fileID: 137820893955314181}
   bulletAura: {fileID: 4675992284690748180}
   shieldAura: {fileID: 6017562264675706769}
+--- !u!114 &7587510500990453499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 735065863608629099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 642b1906a8560244eb35b79e4ccd2357, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterDetector
+  explosionPrefab: {fileID: 5814163796361930292, guid: 87ea843b43b124b4797e60d332c18b31, type: 3}
 --- !u!1 &1562912784755284314
 GameObject:
   m_ObjectHideFlags: 0
